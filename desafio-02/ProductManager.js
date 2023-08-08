@@ -16,7 +16,7 @@ class ProductManager {
                 this.products.push({id: ProductManager.id, title, description, price, thumbnail, code, stock});
                 ProductManager.id++;
             } else {
-                let codeExist = this.products.some( product => product.code === code )
+                let codeExist = this.products.some( product => product.code == code )
                 if (codeExist) {
                     return "ERROR: Ingresa otro código, este ya existe";
                 } else {
@@ -57,14 +57,16 @@ console.log(productManager.getProducts());
 console.log("-------------------------")
 
 /*probando si el codigo se repite*/
-productManager.addProduct({
-	title: 'producto prueba',
-	description: 'Este es un producto prueba',
-	price: 200,
-	thumbnail: 'Sin imagen',
-	code: 'abc123',
-	stock: 25
-});
+console.log(
+    productManager.addProduct({
+        title: 'producto prueba',
+        description: 'Este es un producto prueba',
+        price: 200,
+        thumbnail: 'Sin imagen',
+        code: 'abc123',
+        stock: 25
+    })
+);
 
 console.log("-------------------------")
 /*buscando producto*/
