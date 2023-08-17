@@ -36,7 +36,7 @@ class ProductManager {
                 }
             }
         } catch (error) {
-            console.log(error);
+            return 'ERROR: Producto no agregado', error;
         }
     }
 
@@ -72,7 +72,7 @@ class ProductManager {
             this.products[productIndex] = {...productFind, ...product};
             return await fs.promises.writeFile(this.path, JSON.stringify(this.products));
         } catch (error) {
-            console.log(error);
+            return 'ERROR: Producto no encontrado', error;
         }
     }
 
@@ -89,7 +89,7 @@ class ProductManager {
             }
             
         } catch (error) {
-            console.log('ERROR: Producto no encontrado', error);
+            return 'ERROR: Producto no encontrado', error;
         }
     }
 }
