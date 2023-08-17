@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended:true }));
 
 app.get("/", (req, res) => {
-    res.send("Utilizando express")
+    res.send("Welcome Challenge 06")
 })
 
 app.get("/products", async (req, res) => {
