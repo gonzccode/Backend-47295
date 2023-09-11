@@ -1,1 +1,0 @@
-console.log("desafio de la clase 10");
