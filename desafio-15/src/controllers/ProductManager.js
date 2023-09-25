@@ -83,9 +83,9 @@ class ProductManager {
             if(productFind) {
                 this.products = this.products.filter( product => product.id !== id );
                 await fs.promises.writeFile(this.path, JSON.stringify(this.products));
-                return console.log(`Producto ${id} eliminado`);
+                return `Producto ${id} eliminado`;
             } else {
-                console.log('ERROR: Producto no encontrado, no se pudo eliminar');
+                return false
             }
             
         } catch (error) {

@@ -2,6 +2,7 @@ const express = require("express");
 const handlebars = require("express-handlebars");
 const { Server } = require("socket.io");
 const path = require("path");
+const mongoose = require("mongoose");
 
 const productsRoutes = require("./routes/products.routes");
 const cartsRoutes = require("./routes/carts.routes");
@@ -62,3 +63,7 @@ io.on("connection", async (socket) => {
     });
 
 });
+
+mongoose.connect(
+    "mongodb+srv://gonzacc:Dctjxd2snt9oYpW8@ecommerce.l0js7fh.mongodb.net/?retryWrites=true&w=majority"
+);
