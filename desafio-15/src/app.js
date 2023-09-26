@@ -7,7 +7,8 @@ const mongoose = require("mongoose");
 const productsRoutes = require("./routes/products.routes");
 const cartsRoutes = require("./routes/carts.routes");
 const homeRoutes = require("./routes/home.routes");
-const ProductManager = require("./controllers/ProductManager");
+const chatRoutes = require("./routes/chat.routes");
+const ProductManager = require("./dao/controllers/fs/ProductManager");
 
 const PORT = 8080;
 const BASE_PREFIX = "api";
@@ -32,6 +33,7 @@ app.get("/realtimeproducts", (req, res) => {
 
 //get para routes products y carts
 app.use('/', homeRoutes);
+app.use('/chat', chatRoutes);
 app.use(`/${BASE_PREFIX}/products`, productsRoutes);
 app.use(`/${BASE_PREFIX}/carts`, cartsRoutes);
 
@@ -65,5 +67,5 @@ io.on("connection", async (socket) => {
 });
 
 mongoose.connect(
-    "mongodb+srv://gonzacc:Dctjxd2snt9oYpW8@ecommerce.l0js7fh.mongodb.net/?retryWrites=true&w=majority"
+    "mongodb+srv://gonzacc:Dctjxd2snt9oYpW8@ecommerce.l0js7fh.mongodb.net/ecommerce?retryWrites=true&w=majority"
 );

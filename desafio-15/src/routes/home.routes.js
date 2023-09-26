@@ -1,12 +1,11 @@
 const { Router } = require("express");
 const router = Router();
-const ProductManager = require("../controllers/ProductManager");
-const path = require("path");
+const ProductManager = require("../dao/controllers/fs/ProductManager");
 
 router.get("/", async (request, response) => {
-    const pathDb = path.join(`${__dirname}/../database/products.json`);
-    const productManager = new ProductManager(pathDb);
+    const productManager = new ProductManager();
     const listProducts = await productManager.getProducts();
+    console.log("home router ", listProducts)
     response.status(200).render("home", {products: listProducts});
 });
 

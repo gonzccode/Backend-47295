@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const router = Router();
-const CartManager = require("../controllers/CartManager");
-const ProductManager = require("../controllers/ProductManager");
+const CartManager = require("../dao/controllers/fs/CartManager");
+const ProductManager = require("../dao/controllers/fs/ProductManager");
 
 router.get("/", async (req, res) => {
     const cartManager = new CartManager()

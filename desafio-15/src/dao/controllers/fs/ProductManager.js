@@ -5,7 +5,7 @@ class ProductManager {
     static id = 1;
 
     constructor() {
-        this.path = path.join(`${__dirname}/../database/products.json`);
+        this.path = path.join(`${__dirname}/../../../database/fs/products.json`);
         this.products = [];
     }
 
@@ -43,9 +43,11 @@ class ProductManager {
     getProducts = async () => {
         try {
             this.products = await fs.promises.readFile(this.path);
+            console.log("this products ", this.products)
             return JSON.parse(this.products);
         } catch (error) {
             this.products = []
+            console.log("this catch products ", error)
             return this.products;
         }
     }    

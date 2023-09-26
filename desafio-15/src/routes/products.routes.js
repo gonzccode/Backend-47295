@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const router = Router();
-const ProductManager = require("../controllers/ProductManager");
+const ProductManager = require("../dao/controllers/fs/ProductManager");
 
 router.get("/", async (req, res) => {
     const productManager = new ProductManager();

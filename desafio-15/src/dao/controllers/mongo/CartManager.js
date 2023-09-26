@@ -3,7 +3,7 @@ const path = require('path');
 
 class CartManager {
     constructor () {
-        this.path = path.join(`${__dirname}/../database/carts.json`);;
+        this.path = path.join(`${__dirname}/../database/fs/carts.json`);;
         this.carts = [];
     }
 
