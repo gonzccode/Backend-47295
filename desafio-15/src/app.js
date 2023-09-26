@@ -9,8 +9,9 @@ const cartsRoutes = require("./routes/carts.routes");
 const homeRoutes = require("./routes/home.routes");
 const chatRoutes = require("./routes/chat.routes");
 const ProductManager = require("./dao/controllers/fs/ProductManager");
+const {PORT, DB_NAME, DB_USER, DB_PASSWORD} = require("./config/config");
 
-const PORT = 8080;
+const PORT_API = Number(PORT) || 8080;
 const BASE_PREFIX = "api";
 const app = express();
 
@@ -38,8 +39,8 @@ app.use(`/${BASE_PREFIX}/products`, productsRoutes);
 app.use(`/${BASE_PREFIX}/carts`, cartsRoutes);
 
 //construyendo server
-const server = app.listen(PORT, () => {
-    console.log(`Running on Port ${PORT}`);
+const server = app.listen(PORT_API, () => {
+    console.log(`Running on Port ${PORT_API}`);
 });
 const io = new Server(server);
 
@@ -67,5 +68,5 @@ io.on("connection", async (socket) => {
 });
 
 mongoose.connect(
-    "mongodb+srv://gonzacc:Dctjxd2snt9oYpW8@ecommerce.l0js7fh.mongodb.net/ecommerce?retryWrites=true&w=majority"
+    `mongodb+srv://${DB_USER}:${DB_PASSWORD}@ecommerce.l0js7fh.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`
 );
