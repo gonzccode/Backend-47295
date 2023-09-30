@@ -1,16 +1,14 @@
-const fs = require("fs/promises");
-const path = require('path');
+const cartsModel = require("../../models/carts.model")
 
 class CartManager {
     constructor () {
-        this.path = path.join(`${__dirname}/../database/fs/carts.json`);;
         this.carts = [];
     }
 
     getCart = async () => {
         try {
-            this.carts = await fs.readFile(this.path);
-            return JSON.parse(this.carts)
+            this.carts = await cartsModel.find().lean();
+            return this.carts
         } catch (error) {
             return error
         }
@@ -18,8 +16,7 @@ class CartManager {
 
     getCartId = async (id) => {
         try {
-            this.carts = await this.getCart();
-            const cartFind = this.carts.find( cart => cart.id === id);
+            const cartFind = await cartsModel.findById({_id: id}).lean();
             return cartFind
         } catch (error) {
             return error
@@ -28,20 +25,9 @@ class CartManager {
 
     addCart = async () => {
         try {
-            this.carts = await this.getCart();
-            if (this.carts.length > 0){
-                this.carts.push({
-                    id: this.carts.length + 1,
-                    products: []
-                })
-            } else {
-                this.carts.push({
-                    id: 1,
-                    products: []
-                })
-            }
-
-            return await fs.writeFile(this.path, JSON.stringify(this.carts));
+            const newCart = await cartsModel.create({products: []});
+            console.log(newCart)
+            return newCart
 
         } catch (error) {
             return error
@@ -51,8 +37,7 @@ class CartManager {
     addCartProduct = async (cid, pid) => {
        try {
         this.carts = await this.getCart();
-        const cartFind = this.carts.find( cart => cart.id === cid);
-        const cartFindIndex = this.carts.findIndex( cart => cart.id === cid);
+        const cartFind = await cartsModel.findById({_id: cid}).lean();
         if (cartFind) {
             if(cartFind.products.length > 0) {
                 const productFind = cartFind.products.find( product => product.productid === pid);
@@ -60,36 +45,23 @@ class CartManager {
                 if (productFind) {
                     productFind.quantity = productFind.quantity + 1;
                     cartFind.products[productFindIndex] = productFind;
-                    this.carts[cartFindIndex] = cartFind;
-                    return await fs.writeFile(this.path, JSON.stringify(this.carts));
-
+                    await cartsModel.findByIdAndUpdate(cid, {...cartFind})
+                    return this.getCartId(cid);
                 } else {
                     const quantity = 1
                     cartFind.products.push({productid: pid, quantity: quantity});
-                    this.carts.push(cartFind)
-                    return await fs.writeFile(this.path, JSON.stringify(this.carts))
-                    
+                    await cartsModel.findByIdAndUpdate(cid, {...cartFind})
+                    return this.getCartId(cid);
+                    //return await cartFind.save();
                 }
             } else {
                 const quantity = 1
                 cartFind.products.push({productid: pid, quantity: quantity});
-                this.carts[cartFindIndex] = cartFind;
-                return await fs.writeFile(this.path, JSON.stringify(this.carts))
-
+                await cartsModel.findByIdAndUpdate(cid, {...cartFind})
+                return this.getCartId(cid);
             }
-            
         } else {
-            this.carts.push({
-                id: cid,
-                products: [
-                    {
-                        productid: pid,
-                        quantity: 1
-                    }
-                ]
-            })
-            return await fs.writeFile(this.path, JSON.stringify(this.carts));
-            
+            return false; 
         }
         
        } catch (error) {

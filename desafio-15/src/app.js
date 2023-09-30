@@ -8,9 +8,10 @@ const productsRoutes = require("./routes/products.routes");
 const cartsRoutes = require("./routes/carts.routes");
 const homeRoutes = require("./routes/home.routes");
 const chatRoutes = require("./routes/chat.routes");
-const ProductManager = require("./dao/controllers/fs/ProductManager");
+const ProductManager = require("./dao/controllers/mongo/ProductManager");
 const {PORT, DB_NAME, DB_USER, DB_PASSWORD} = require("./config/config");
 
+const productManager = new ProductManager();
 const PORT_API = Number(PORT) || 8080;
 const BASE_PREFIX = "api";
 const app = express();
@@ -47,22 +48,24 @@ const io = new Server(server);
 io.on("connection", async (socket) => {
     console.log("cliente conectado");
 
-    const productManager = new ProductManager();
-
     //extrayendo lista de productos para real time products
-    const listProductRealTime = await productManager.getProducts();
-
+    let listProductRealTime = await productManager.getProducts();
+    
     //enviando la lista de producto con el mensaje listproducts
     socket.emit('listProductsReal', listProductRealTime);
 
     //escuchando el mensaje addproduct paraagregar producto
     socket.on('addProduct', async (product) => {
         await productManager.addProduct(product); 
+        listProductRealTime =await productManager.getProducts();
+        socket.emit('listProductsReal', listProductRealTime);
     });
 
     //escuchando el mensaje deleteproduct para eliminar producto
     socket.on('deleteProduct', async (id) => {
-        await productManager.deleteProduct(Number(id));
+        await productManager.deleteProduct(id);
+        listProductRealTime =await productManager.getProducts();
+        socket.emit('listProductsReal', listProductRealTime);
     });
 
 });

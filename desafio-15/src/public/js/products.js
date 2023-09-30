@@ -34,7 +34,7 @@ socket.on("listProductsReal", listProductRealTime => {
                 <p>Code: $ ${product.code}</p>
                 <p>Stock: ${product.stock}</p>
                 <p>Category: ${product.category}</p>
-                <button id=${product.id} class='btn btn-danger btn-del'>Delete</button>
+                <button id=${product._id} class='btn btn-danger btn-del'>Delete</button>
                 <p>----------------------------------</p>
             </div>
         `;

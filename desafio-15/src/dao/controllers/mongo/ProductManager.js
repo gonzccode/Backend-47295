@@ -1,11 +1,8 @@
-const fs = require('fs');
-const path = require('path');
+const productsModel = require("../../models/products.model")
 
 class ProductManager {
-    static id = 1;
 
     constructor() {
-        this.path = path.join(`${__dirname}/../database/fs/products.json`);
         this.products = [];
     }
 
@@ -19,19 +16,15 @@ class ProductManager {
                 return "ERROR: Debes completar todo los campos";
             } else {
                 if (this.products.length == 0) {
-                    this.products.push({id: this.products.length + ProductManager.id, title, description, price, thumbnail, code, stock});
-                    ProductManager.id++;
-                    /*Agregando en el archivo Productos*/
-                    return await fs.promises.writeFile(this.path, JSON.stringify(this.products))
+                    /*Agregando en el DB Productos*/
+                    return await productsModel.create({title, description, price, thumbnail, code, stock, status, category});
                 } else {
-                    let codeExist = this.products.some( product => product.code == code )
+                    let codeExist = await productsModel.findOne({code: code}) 
                     if (codeExist) {
                         return "ERROR: Ingresa otro código, este ya existe";
                     } else {
-                        this.products.push({id: this.products.length + ProductManager.id, title, description, price, thumbnail, code, stock });
-                        ProductManager.id++;
-                        /*Agregando en el archivo Productos*/
-                        return await fs.promises.writeFile(this.path, JSON.stringify(this.products))
+                        /*Agregando en el DB Productos*/
+                        return await productsModel.create({title, description, price, thumbnail, code, stock, status, category});
                     }
                 }
             }
@@ -42,8 +35,8 @@ class ProductManager {
 
     getProducts = async () => {
         try {
-            this.products = await fs.promises.readFile(this.path);
-            return JSON.parse(this.products);
+            this.products = await productsModel.find().lean();
+            return this.products;
         } catch (error) {
             this.products = []
             return this.products;
@@ -52,10 +45,9 @@ class ProductManager {
 
     getProductById = async (id) => {
         try {
-           this.products = await this.getProducts();
-           let product = this.products.find( product => product.id === id );
-           if(product) {
-            return product;
+           const productFind = await productsModel.findById({_id: id}).lean();
+           if(productFind) {
+            return productFind;
            } else {
             return null;
            }
@@ -66,11 +58,12 @@ class ProductManager {
 
     updateProduct = async (id, product) => {
         try {
-            this.products = await this.getProducts();
-            let productFind = await this.getProductById(id);
-            let productIndex = this.products.findIndex(product => product.id === id);
-            this.products[productIndex] = {...productFind, ...product};
-            return await fs.promises.writeFile(this.path, JSON.stringify(this.products));
+            const productFind = await this.getProductById(id);
+            if(productFind){
+                return await productsModel.findByIdAndUpdate(id, {...product}); 
+            }else {
+                return false
+            }
         } catch (error) {
             return 'ERROR: Producto no encontrado', error;
         }
@@ -78,16 +71,12 @@ class ProductManager {
 
     deleteProduct = async (id) => {
         try {
-            this.products = await this.getProducts();
-            let productFind = this.products.find( product => product.id === id );
-            if(productFind) {
-                this.products = this.products.filter( product => product.id !== id );
-                await fs.promises.writeFile(this.path, JSON.stringify(this.products));
-                return `Producto ${id} eliminado`;
+            const productFind = await this.getProductById(id);
+            if (productFind) {
+                return await productsModel.findByIdAndDelete(id);
             } else {
                 return false
             }
-            
         } catch (error) {
             return 'ERROR: Producto no encontrado', error;
         }

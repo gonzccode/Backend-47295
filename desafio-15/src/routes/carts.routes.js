@@ -1,7 +1,21 @@
 const { Router } = require("express");
 const router = Router();
-const CartManager = require("../dao/controllers/fs/CartManager");
-const ProductManager = require("../dao/controllers/fs/ProductManager");
+const CartManager = require("../dao/controllers/mongo/CartManager");
+const ProductManager = require("../dao/controllers/mongo/ProductManager");
+const cartsModel = require("../dao/models/carts.model");
+const cartsData = require("../database/mongo/carts");
+
+router.get("/insertion", async (req, res) => {
+    try {
+        const carts = await cartsModel.insertMany(cartsData);
+        return res.json({
+            message: 'carts insert successfully',
+            productsInserted: carts
+        })
+    } catch (error) {
+        return error
+    }
+});
 
 router.get("/", async (req, res) => {
     const cartManager = new CartManager()
@@ -16,7 +30,7 @@ router.get("/", async (req, res) => {
 router.get("/:cid", async (req, res) => {
     const cartManager = new CartManager();
     const cid = req.params.cid;
-    const cart = await cartManager.getCartId(Number(cid));
+    const cart = await cartManager.getCartId(cid);
     if(cart){
         return res.json({
             ok: true,
@@ -51,8 +65,8 @@ router.post("/:cid/product/:pid", async (req, res) => {
     const productManager = new ProductManager();
     const cid = req.params.cid;
     const pid = req.params.pid;
-    const product = await productManager.getProductById(Number(pid));
-    const cart = await cartManager.addCartProduct(Number(cid), Number(pid))
+    const product = await productManager.getProductById(pid);
+    const cart = await cartManager.addCartProduct(cid, pid)
     return res.json({
         ok: true,
         message: `agregado exitosamente a carrito ${cid} el producto ${pid}`,

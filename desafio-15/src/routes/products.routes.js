@@ -1,6 +1,22 @@
 const { Router } = require("express");
 const router = Router();
-const ProductManager = require("../dao/controllers/fs/ProductManager");
+const ProductManager = require("../dao/controllers/mongo/ProductManager");
+const productsModel = require("../dao/models/products.model");
+const productsData = require("../database/mongo/products");
+
+/*Agregando datos a Mongo*/
+router.get("/insertion", async (req, res) => {
+    try {
+        const products = await productsModel.insertMany(productsData);
+        return res.json({
+            message: 'products insert successfully',
+            productsInserted: products
+        })
+    } catch (error) {
+        return error
+    }
+});
+
 
 router.get("/", async (req, res) => {
     const productManager = new ProductManager();
@@ -19,7 +35,7 @@ router.get("/", async (req, res) => {
 
 router.get("/:pid", async (req, res) => {
     const productManager = new ProductManager();
-    const pid = parseInt(req.params.pid, 10);
+    const pid = req.params.pid;
     const product = await productManager.getProductById(pid);
 
     if(product) {
@@ -64,7 +80,7 @@ router.put("/:pid", async (req, res) => {
     const productManager = new ProductManager();
     const pid = req.params.pid;
     const productBody = req.body;
-    await productManager.updateProduct(Number(pid), productBody);
+    await productManager.updateProduct(pid, productBody);
     const listProducts = await productManager.getProducts();
     return res.json({
         ok: true,
@@ -78,7 +94,7 @@ router.put("/:pid", async (req, res) => {
 router.delete("/:pid", async (req, res) => {
     const productManager = new ProductManager();
     const pid = req.params.pid;
-    const productDelete = await productManager.deleteProduct(Number(pid));
+    const productDelete = await productManager.deleteProduct(pid);
     const listProducts = await productManager.getProducts();
     
     if(productDelete) {
