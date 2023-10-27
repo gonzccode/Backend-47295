@@ -20,16 +20,122 @@ router.get("/insertion", async (req, res) => {
 
 router.get("/", async (req, res) => {
     const productManager = new ProductManager();
+    const { limit = 10, page = 1, sort: sortPage, query } = req.query;
     const products = await productManager.getProducts();
 
-    if (req.query.limit) {
-        const limit = parseInt(req.query.limit, 10);
-        const productsLimit = products.filter( product => product.id <= limit);
-        
-        return res.send(productsLimit);
-    } else {
+    /*para QUERY se tiene los filtros de categoria y stock
+    categoria => education, sport, entertainment
+    status => true o false
+    
+    para SORT es respecto al precio*/
 
-        return res.send(products);
+    if(sortPage && !query) {
+        const {
+            docs,
+            totalDocs,
+            limit: limitPages,
+            totalPages,
+            prevPage,
+            nextPage,
+            page : pageActual,
+            hasPrevPage,
+            hasNextPage,
+        } = await productsModel.paginate({}, {page, limit, sort: {price: sortPage}, lean: true} );
+
+        //retornando un objeto con los valores
+        return res.status(200).render("products", {
+            status: 'success',
+            payload: docs,
+            totalPages: totalPages,
+            prevPage: prevPage,
+            nextPage: nextPage,
+            page: pageActual,
+            hasPrevPage: hasPrevPage,
+            hasNextPage: hasNextPage,
+            prevLink: hasPrevPage? `?limit=${limit}&page=${Number(page) - 1}&sort=${sortPage}` : null,
+            nextLink: hasNextPage ? `?limit=${limit}&page=${Number(page) + 1}&sort=${sortPage}` : null
+        });
+
+    } else if (!sortPage && query){
+        const {
+            docs,
+            totalDocs,
+            limit: limitPages,
+            totalPages,
+            prevPage,
+            nextPage,
+            page : pageActual,
+            hasPrevPage,
+            hasNextPage,
+        } = await productsModel.paginate({category: query}, {page, limit, lean: true} );
+
+        //retornando un objeto con los valores
+        return res.status(200).render("products", {
+            status: 'success',
+            payload: docs,
+            totalPages: totalPages,
+            prevPage: prevPage,
+            nextPage: nextPage,
+            page: pageActual,
+            hasPrevPage: hasPrevPage,
+            hasNextPage: hasNextPage,
+            prevLink: hasPrevPage? `http://localhost:8080/api/products?limit=${limit}&page=${Number(page) - 1}&query=${query}` : null,
+            nextLink: hasNextPage ? `http://localhost:8080/api/products?limit=${limit}&page=${Number(page) + 1}&query=${query}` : null
+        });
+
+    } else if (!sortPage & !query) {
+        const {
+            docs,
+            totalDocs,
+            limit: limitPages,
+            totalPages,
+            prevPage,
+            nextPage,
+            page : pageActual,
+            hasPrevPage,
+            hasNextPage,
+        } = await productsModel.paginate({}, {page, limit, lean: true} );
+
+        //retornando un objeto con los valores
+        return res.status(200).render("products", {
+            status: 'success',
+            payload: docs,
+            totalPages: totalPages,
+            prevPage: prevPage,
+            nextPage: nextPage,
+            page: pageActual,
+            hasPrevPage: hasPrevPage,
+            hasNextPage: hasNextPage,
+            prevLink: hasPrevPage? `http://localhost:8080/api/products?limit=${limit}&page=${Number(page) - 1}` : null,
+            nextLink: hasNextPage ? `http://localhost:8080/api/products?limit=${limit}&page=${Number(page) + 1}` : null
+        });
+
+    } else {
+        const {
+            docs,
+            totalDocs,
+            limit: limitPages,
+            totalPages,
+            prevPage,
+            nextPage,
+            page : pageActual,
+            hasPrevPage,
+            hasNextPage,
+        } = await productsModel.paginate({category: query}, {page, limit, sort: {price: sortPage}, lean: true} );
+
+        //retornando un objeto con los valores
+        return res.status(200).render("products", {
+            status: 'success',
+            payload: docs,
+            totalPages: totalPages,
+            prevPage: prevPage,
+            nextPage: nextPage,
+            page: pageActual,
+            hasPrevPage: hasPrevPage,
+            hasNextPage: hasNextPage,
+            prevLink: hasPrevPage? `http://localhost:8080/api/products?limit=${limit}&page=${Number(page) - 1}&query=${query}&sort=${sortPage}` : null,
+            nextLink: hasNextPage ? `http://localhost:8080/api/products?limit=${limit}&page=${Number(page) + 1}&query=${query}&sort=${sortPage}` : null
+        });
     }
 });
 
