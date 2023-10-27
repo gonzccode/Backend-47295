@@ -1,3 +1,19 @@
+<h1>Bienvenido</h1>
+{{#if user}}
+    <p><strong>Usuario: </strong>{{user.first_name}}</p>
+    <p><strong>Apellido: </strong>{{user.last_name}}</p>
+    <p><strong>Correo: </strong>{{user.email}}</p>
+    <p><strong>Edad: </strong>{{user.age}}</p>
+    <p><strong>Role: </strong>{{user.role}}</p>
+    <div>
+        <form action="/api/session/logout" method="get">
+            <button class="btn btn-danger" type="submit">Salir</button>
+        </form>
+    </div>
+{{else}}
+<p><strong>No se encontró al usuario</strong></p>
+{{/if}}
+<br/>
 {{#if products}}
     <h3><strong>Products</strong></h3>
     <h3>-------------</h3>
