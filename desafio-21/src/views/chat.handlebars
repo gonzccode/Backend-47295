@@ -1,0 +1,11 @@
+{{#if messages}}
+    <h3><strong>Chat</strong></h3>
+    <h3>-------------</h3>
+    {{#each messages}}
+        <p>User: {{this.user}}</p>
+        <p>Message: {{this.message}}</p>
+        <p>---------------------</p>
+    {{/each}}
+{{else}}
+    <h3><strong>No found messages</strong></h3>
+{{/if}}
