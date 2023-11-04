@@ -18,7 +18,8 @@ router.get('/home', authMdw, async (request, response) => {
     console.log("views.routes /home userSession", userSession)
     const productManager = new ProductManager();
     const listProducts = await productManager.getProducts();
-    response.status(200).render("home", {user: userSession._doc , products: listProducts});
+    const users = userSession._doc || userSession;
+    response.status(200).render("home", {user: users , products: listProducts});
 });
 
 module.exports = router;

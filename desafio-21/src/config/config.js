@@ -4,8 +4,8 @@ config({
     path: `.env.${process.env.NODE_ENV || "development"}`,
   });
 
-const { PORT, DB_NAME, DB_USER, DB_PASSWORD } = process.env;
+const { NODE_ENV, PORT, DB_NAME, DB_USER, DB_PASSWORD, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } = process.env;
 
 module.exports = {
-    PORT, DB_NAME, DB_USER, DB_PASSWORD
+  NODE_ENV, PORT, DB_NAME, DB_USER, DB_PASSWORD, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET
 };

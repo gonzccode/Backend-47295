@@ -1,7 +1,9 @@
-const { Router } = require("express");
+const { Router, request } = require("express");
 const router = Router();
+const passport = require("passport");
 const userModel = require("../dao/models/user.model");
 const ProductManager = require("../dao/controllers/mongo/ProductManager");
+const { createHashValue, isValidPassword } = require("../utils/encrypt");
 
 router.get("/logout", async (request, response) => {
     request.session.destroy((error) => {
@@ -24,10 +26,16 @@ router.post("/login", async (request, response) => {
     if (!findUser) {
         return response.json({ message: `este usuario no esta registrado` });
     }
-  
-    if (findUser.password !== password) {
-        return response.json({ message: `password incorrecto` });
+
+    const isValidComparePwd = await isValidPassword(password, findUser.password);
+
+    if(!isValidComparePwd) {
+        return response.json({ message: 'password incorrecto' });
     }
+  
+    // if (findUser.password !== password) {
+    //     return response.json({ message: `password incorrecto` });
+    // }
 
     console.log("session.routes => /login => findUser", findUser)
     request.session.user = { ...findUser };
@@ -50,6 +58,7 @@ router.post("/login", async (request, response) => {
 router.post("/register", async (request, response) => {
     try {
         const { first_name, last_name, email, age, role, password } = request.body;
+        const passwordHashed = await createHashValue(password);
         const userAdd = { first_name, last_name, email, age, role, password };
         const newUser = await userModel.create(userAdd);
         request.session.user = {email, first_name, last_name, age, role}
@@ -60,5 +69,22 @@ router.post("/register", async (request, response) => {
     }
     
 });
+
+router.get("/github", 
+    passport.authenticate("github", {scope : ["user.email"]}),
+    async (request, response) => {}
+);
+
+router.get("/github/callback",
+    passport.authenticate("github", { failureRedirect: "/login" }),
+    async (request, response) => {
+        try {
+            request.session.user = request.user;
+            response.redirect("/home");
+        } catch (error) {
+            return error;
+        }
+    }
+);
 
 module.exports = router;

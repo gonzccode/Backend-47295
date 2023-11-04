@@ -6,6 +6,8 @@ const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const mongoStore = require("connect-mongo");
+const passport = require("passport");
+const initializePassport = require("./config/passport.config");
 
 const productsRoutes = require("./routes/products.routes");
 const cartsRoutes = require("./routes/carts.routes");
@@ -48,6 +50,10 @@ app.use(
         saveUninitialized: false,
     })
 )
+
+//iniciando passport github
+initializePassport();
+app.use(passport.initialize());
 
 //get para realtimeproducts
 app.get("/realtimeproducts", (req, res) => {
