@@ -22,17 +22,27 @@ const usersSchema = mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['admin', 'usuario'],
+        enum: ['admin', 'user'],
         default: function() {
             if ( this. email == 'adminCoder@coder.com'){
                 return 'admin'
             } else {
-                return 'usuario'
+                return 'user'
             }
         }
     },
     password: {
         type: String
+    },
+    cart: {
+        type: [
+            {
+                id: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "Carts"
+                }
+            }
+        ]
     }
 });
 
