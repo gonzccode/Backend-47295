@@ -1,0 +1,25 @@
+{{#if payload}}
+    <h3>Productos</h3>
+        {{#each payload}}
+                <p>Producto: {{this.title}}</p>
+                <p>Descripcion: {{this.description}}</p>
+                <p>Precio: ${{this.price}}</p>
+                <p>Codigo: {{this.code}}</p>
+                <p>Stock: {{this.stock}}</p>
+                <button id="btn-add-product-to-cart" class="btn btn-primary">agregar al carrito</button>
+                <p>---------------------</p>
+        {{/each}}  
+{{else}}
+    <p><strong>No se encontró productos</strong></p>
+{{/if}}
+
+{{#if hasPrevPage}}
+    <div>   
+        <a href="{{prevLink}}"><strong>Página previa {{prevPage}}</strong></a>
+    </div>
+{{/if}}
+{{#if hasNextPage}}
+    <div>
+        <a href="{{nextLink}}"><strong>Página siguiente {{nextPage}}</strong></a>
+    </div>
+{{/if}}
