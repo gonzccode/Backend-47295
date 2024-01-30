@@ -1,0 +1,11 @@
+NODE_ENV=depelopment
+PORT=8080
+
+#BD
+DB_NAME=your_name_bd
+DB_USER=your_name_user_mongo_atlas
+DB_PASSWORD=your_password_user_mongo_atlas
+
+#GITHUB
+GITHUB_CLIENT_ID=your_cliente_id_github
+GITHUB_CLIENT_SECRET=your_cliente_secret_github
