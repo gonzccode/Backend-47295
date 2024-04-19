@@ -24,7 +24,7 @@ const BASE_PREFIX = "api";
 const MONGO_URL = `mongodb+srv://${DB_USER}:${DB_PASSWORD}@ecommerce.l0js7fh.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`;
 const app = express();
 
-//configurando handlebars
+//Configurando Handlebars
 app.engine("handlebars", handlebars.engine());
 app.set("views", path.join(`${__dirname}/views`));
 app.set("view engine", "handlebars");
